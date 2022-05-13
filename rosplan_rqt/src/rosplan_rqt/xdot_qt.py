@@ -218,7 +218,7 @@ class BezierShape(Shape):
     def draw(self, painter, highlight=False):
         painter_path = QPainterPath()
         painter_path.moveTo(QPointF(*self.points[0]))
-        for i in xrange(1, len(self.points), 3):
+        for i in range(1, len(self.points), 3):
             painter_path.cubicTo(
                 QPointF(*self.points[i]),
                 QPointF(*self.points[i + 1]),
@@ -571,6 +571,8 @@ class XDotAttrParser:
             elif op == "p":
                 points = self.read_polygon()
                 self.handle_polygon(points, filled=False)
+            elif op == "":
+                break
             else:
                 sys.stderr.write("unknown xdot opcode '%s'\n" % op)
                 break
@@ -1324,7 +1326,7 @@ class ZoomAreaAction(DragAction):
 
     def draw(self, painter):
         #TODO: implement this for qt
-        print "ERROR: UNIMPLEMENTED ZoomAreaAction.draw"
+        print( "ERROR: UNIMPLEMENTED ZoomAreaAction.draw")
         return
         painter.save()
         painter.set_source_rgba(.5, .5, 1.0, 0.25)
@@ -1405,8 +1407,8 @@ class DotWidget(QWidget):
         self.filter = filter
 
     def set_dotcode(self, dotcode, filename='<stdin>',center=True):
-        if isinstance(dotcode, unicode):
-            dotcode = dotcode.encode('utf8')
+#        if isinstance(dotcode, unicode):
+#            dotcode = dotcode.encode('utf8')
         p = subprocess.Popen(
             [self.filter, '-Txdot'],
             stdin=subprocess.PIPE,
@@ -1417,7 +1419,7 @@ class DotWidget(QWidget):
         )
         xdotcode, error = p.communicate(dotcode)
         if p.returncode != 0:
-            print "UNABLE TO SHELL TO DOT", error
+            print(f'UNABLE TO SHELL TO DOT, error ; {error}')
 #            dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
 #                                       message_format=error,
 #                                       buttons=gtk.BUTTONS_OK)
@@ -1437,7 +1439,7 @@ class DotWidget(QWidget):
             # Store references to subgraph states
             self.subgraph_shapes = self.graph.subgraph_shapes
 
-        except ParseError, ex:
+        except ParseError as ex:
 #            dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
 #                                       message_format=str(ex),
 #                                       buttons=gtk.BUTTONS_OK)
@@ -1846,7 +1848,7 @@ class DotWindow(QMainWindow):
             self.set_dotcode(fp.read(), filename)
             fp.close()
             self.add_recent_file(filename)
-        except IOError, ex:
+        except IOError as ex:
             pass
 
     def on_open(self):
