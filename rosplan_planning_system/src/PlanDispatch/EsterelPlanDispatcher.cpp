@@ -475,6 +475,8 @@ namespace KCL_rosplan {
         std_msgs::String msg;
         msg.data = dest.str();
         plan_graph_publisher.publish(msg);
+        
+        return true;
     }
 } // close namespace
 
