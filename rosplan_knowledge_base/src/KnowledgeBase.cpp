@@ -684,6 +684,13 @@ namespace KCL_rosplan {
 
 } // close namespace
 
+
+bool readSensedPredicates(std::string _yaml_path,
+			  std::map<std::string, bool> &_sensed_map)
+{
+  
+}
+
 /*-------------*/
 /* main method */
 /*-------------*/
@@ -699,7 +706,7 @@ int main(int argc, char **argv) {
     n.param("use_unknowns", useUnknowns, false);
     n.param("domain_path", domainPath, domainPath);
     n.param("problem_path", problemPath, problemPath);
-
+    
     std::string extension = (domainPath.size() > 5)? domainPath.substr(domainPath.find_last_of('.')) : "";
     KCL_rosplan::KnowledgeBaseFactory::KB kb_type;
     if (extension == ".pddl") {
@@ -726,13 +733,23 @@ int main(int argc, char **argv) {
         }
 
     KCL_rosplan::KnowledgeBasePtr kb = KCL_rosplan::KnowledgeBaseFactory::createKB(kb_type, n);
-
+    
     // parse domain
-        kb->parseDomain(domainPath, problemPath);
-        kb->use_unknowns = useUnknowns;
-
+    kb->parseDomain(domainPath, problemPath);
+    kb->use_unknowns = useUnknowns;
+    // Sensed predicates
+    std::vector<std::string> sensed_predicates;
+    n.getParam("sensed_predicates", sensed_predicates);
+    for(auto spi : sensed_predicates)
+    {
+      printf("Sensed predicate: %s \n", spi.c_str());
+      rosplan_knowledge_msgs::SetNamedBool srv;
+      srv.request.name = spi; srv.request.value = true;   
+      kb->setSensedPredicate(srv.request, srv.response);
+    }
     ROS_INFO("KCL: (%s) Ready to receive", ros::this_node::getName().c_str());
     kb->runKnowledgeBase();
 
     return 0;
 }
+
