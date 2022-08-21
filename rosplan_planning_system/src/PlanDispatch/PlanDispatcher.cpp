@@ -126,7 +126,7 @@ namespace KCL_rosplan {
 	 *	Returns true of the actions preconditions are true in the current state. Calls the Knowledge Base.
 	 */
     bool PlanDispatcher::checkPreconditions(rosplan_dispatch_msgs::ActionDispatch msg) {
-
+      ROS_WARN_STREAM("** Check preconditions: " << msg );
         // get domain operator details
         rosplan_knowledge_msgs::GetDomainOperatorDetailsService srv;
         srv.request.name = msg.name;

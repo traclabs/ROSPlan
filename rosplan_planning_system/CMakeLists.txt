@@ -26,7 +26,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Declare things to be passed to dependent projects
 catkin_package(
   INCLUDE_DIRS include ${catkin_INCLUDE_DIRS}
-  LIBRARIES rosplan_action_interface
+  LIBRARIES rosplan_action_interface rosplan_parser rosplan_dispatcher
   CATKIN_DEPENDS roscpp rospy actionlib std_msgs std_srvs diagnostic_msgs
                  rosplan_dispatch_msgs rosplan_knowledge_msgs roslib rostest
   DEPENDS
@@ -65,8 +65,8 @@ add_executable(upm_planner_interface src/PlannerInterface/UPMPlannerInterface.cp
 add_executable(pprp_planner_interface src/PlannerInterface/PPRPPlannerInterface.cpp src/PlannerInterface/PlannerInterface.cpp)
 add_executable(chimp_planner_interface src/PlannerInterface/CHIMPPlannerInterface.cpp src/PlannerInterface/PlannerInterface.cpp)
 add_executable(online_planner_interface src/PlannerInterface/OnlinePlannerInterface.cpp src/PlannerInterface/PlannerInterface.cpp)
-add_executable(pddl_simple_plan_parser src/PlanParsing/PDDLSimplePlanParser.cpp src/PlanParsing/PlanParser.cpp)
-add_executable(pddl_esterel_plan_parser src/PlanParsing/PDDLEsterelPlanParser.cpp src/PlanParsing/PlanParser.cpp)
+add_executable(pddl_simple_plan_parser src/PlanParsing/PDDLSimplePlanParser.cpp)
+add_executable(pddl_esterel_plan_parser src/PlanParsing/PDDLEsterelPlanParser.cpp)
 add_executable(pddl_simple_plan_dispatcher src/PlanDispatch/SimplePlanDispatcher.cpp src/PlanDispatch/PlanDispatcher.cpp)
 add_executable(pddl_esterel_plan_dispatcher src/PlanDispatch/EsterelPlanDispatcher.cpp src/PlanDispatch/PlanDispatcher.cpp)
 add_executable(online_plan_dispatcher src/PlanDispatch/OnlinePlanDispatcher.cpp src/PlanDispatch/PlanDispatcher.cpp)
@@ -109,10 +109,10 @@ target_link_libraries(upm_planner_interface ${catkin_LIBRARIES})
 target_link_libraries(pprp_planner_interface ${catkin_LIBRARIES})
 target_link_libraries(online_planner_interface ${catkin_LIBRARIES})
 target_link_libraries(chimp_planner_interface ${catkin_LIBRARIES})
-target_link_libraries(pddl_simple_plan_parser ${catkin_LIBRARIES})
-target_link_libraries(pddl_esterel_plan_parser ${catkin_LIBRARIES})
-target_link_libraries(pddl_simple_plan_dispatcher ${catkin_LIBRARIES})
-target_link_libraries(pddl_esterel_plan_dispatcher ${catkin_LIBRARIES})
+target_link_libraries(pddl_simple_plan_parser rosplan_parser ${catkin_LIBRARIES})
+target_link_libraries(pddl_esterel_plan_parser rosplan_parser ${catkin_LIBRARIES})
+target_link_libraries(pddl_simple_plan_dispatcher rosplan_dispatcher ${catkin_LIBRARIES})
+target_link_libraries(pddl_esterel_plan_dispatcher rosplan_dispatcher ${catkin_LIBRARIES})
 target_link_libraries(online_plan_dispatcher ${catkin_LIBRARIES})
 target_link_libraries(simulatedAction ${catkin_LIBRARIES})
 
@@ -121,11 +121,18 @@ target_link_libraries(simulatedAction ${catkin_LIBRARIES})
 add_library(rosplan_action_interface src/ActionInterface/RPActionInterface.cpp)
 add_dependencies(rosplan_action_interface ${catkin_EXPORTED_TARGETS})
 
+add_library(rosplan_parser src/PlanParsing/PlanParser.cpp)
+add_dependencies(rosplan_parser ${catkin_EXPORTED_TARGETS})
+
+add_library(rosplan_dispatcher src/PlanDispatch/PlanDispatcher.cpp)
+add_dependencies(rosplan_dispatcher ${catkin_EXPORTED_TARGETS})
+
+
 #############
 ## Install ##
 #############
 
-install(TARGETS rosplan_action_interface simulatedAction
+install(TARGETS rosplan_action_interface simulatedAction rosplan_parser rosplan_dispatcher
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
