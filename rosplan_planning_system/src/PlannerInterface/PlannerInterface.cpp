@@ -21,7 +21,8 @@ namespace KCL_rosplan {
 	 * planning system service method (1) 
 	 * loads parameters from param server
 	 */
-	bool PlannerInterface::runPlanningServerDefault(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res) {
+	bool PlannerInterface::runPlanningServerDefault(std_srvs::Empty::Request &req,
+							std_srvs::Empty::Response &res) {
 
 		// defaults
 		use_problem_topic = false;
