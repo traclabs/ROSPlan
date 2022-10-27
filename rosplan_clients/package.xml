@@ -16,6 +16,7 @@
   <depend>rosplan_dispatch_msgs</depend>
   <depend>rosplan_planning_system</depend>
   <depend>std_msgs</depend>
+  <depend>rosplan_ext_msgs</depend>
 
   <export>
   </export>

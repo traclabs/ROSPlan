@@ -55,7 +55,7 @@ void PlannerClient::reset()
   latest_problem_ = std::string("");
 }
   
-bool PlannerClient::getPlan(std::string &_plan)
+bool PlannerClient::getPlan(rosplan_ext_msgs::Plan &_plan_msg)
 {
   reset();
   std_srvs::Empty srv;   
@@ -76,11 +76,67 @@ bool PlannerClient::getPlan(std::string &_plan)
 
    bool res = plan_received_;
    if(res) 
-     _plan = latest_plan_;
+   {
+     parsePlan(latest_plan_, _plan_msg);
 
+     for(auto id : _plan_msg.items)
+       printf("Plan item line: %f -- %s -- %f \n",
+	      id.time,
+	      id.action.c_str(),
+	      id.duration);
+   }
+   
    reset();
 
    return res;
+}
+
+bool PlannerClient::parsePlan(const std::string &_plan_string,
+			      rosplan_ext_msgs::Plan &_msg)
+{
+  // Reset
+  _msg.items.clear();
+  
+  int curr, next;
+  std::string line;
+  std::istringstream planfile(_plan_string);
+    
+  while (std::getline(planfile, line)) {
+    
+    if (line.length()<2)
+      break;
+    
+    // check to see if the line looks like a planned action
+    if (line.find("[", 0) == std::string::npos
+	|| line.find("]", 0) == std::string::npos
+	|| line.find("(", 0) == std::string::npos
+	|| line.find(")", 0) == std::string::npos
+	|| line.find(":", 0) == std::string::npos)
+      continue;
+    
+    
+    rosplan_ext_msgs::PlanItem item;
+
+    // dispatchTime
+    curr=line.find(":");
+    double dispatchTime = (double)atof(line.substr(0,curr).c_str());
+    item.time = dispatchTime;
+
+    // Action
+    curr = line.find("(");
+    next = line.find(")");
+
+    item.action = (line.substr(curr, next-curr+1)).c_str();
+      
+    // duration
+    curr=line.find("[",curr)+1;
+    next=line.find("]",curr);
+    item.duration = (double)atof(line.substr(curr,next-curr).c_str());
+    
+    _msg.items.push_back(item);
+  } // while
+
+  return true;
 }
 
 

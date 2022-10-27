@@ -9,6 +9,7 @@ set(DEPS
   rosplan_dispatch_msgs
   rosplan_planning_system
   std_msgs
+  rosplan_ext_msgs
 )  
 
 find_package(catkin REQUIRED COMPONENTS

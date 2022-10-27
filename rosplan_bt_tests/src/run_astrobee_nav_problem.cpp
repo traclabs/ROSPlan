@@ -4,6 +4,8 @@
 #include <ros/ros.h>
 #include <rosplan_clients/PlannerClient.h>
 #include <rosplan_clients/DomainClient.h>
+#include <rosplan_clients/ExecutorClient.h>
+#include <rosplan_ext_msgs/Plan.h>
 
 /**
  * @class RunProblem
@@ -21,30 +23,33 @@ public:
     printf("Init..\n");
     domain_expert_ = std::make_shared<rosplan::DomainClient>();
     planner_client_ = std::make_shared<rosplan::PlannerClient>();
-
-    std::string plan;
+    executor_client_ = std::make_shared<rosplan::ExecutorClient>();
+    
+    rosplan_ext_msgs::Plan plan;
     if(!planner_client_->getPlan(plan))
     {
       printf("Error - Plan was not retrieved \n");
       return false;
     }
 
-    printf("Plan obtained : \n %s \n", plan.c_str());
-  
+    if (!executor_client_->start_plan_execution(plan))
+      printf("Error starting the obtained plan");
+    
     return true;
   }
 
   void step()
   {
+
   }
   
 protected:
   ros::NodeHandle pnh_;
   std::shared_ptr<rosplan::DomainClient> domain_expert_;
   std::shared_ptr<rosplan::PlannerClient> planner_client_;
-  /*  
-  std::shared_ptr<rosplan::ProblemExpertClient> problem_expert_;
-  std::shared_ptr<rosplan::ExecutorClient> executor_client_;*/
+  std::shared_ptr<rosplan::ExecutorClient> executor_client_;
+  
+  //std::shared_ptr<rosplan::ProblemExpertClient> problem_expert_;
 };
 
 /*********************************/
