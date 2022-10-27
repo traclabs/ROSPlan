@@ -15,28 +15,30 @@ set(DEPS
   ${MSG_DEPS}
 )
 
-## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
 ${DEPS}
 )
 
-## Generate messages in the 'msg' folder
 add_message_files(
    FILES
    Plan.msg
    PlanItem.msg
+   Tree.msg
+   Node.msg
+   Param.msg
+   ActionExecutionInfo.msg
 )
 
-#add_service_files(
-#  FILES
-#  PlanningService.srv
-#)
+add_service_files(
+  FILES
+  GetOrderedSubGoals.srv
+  GetPlan.srv
+)
 
-#add_action_files(
-#  FILES
-#  Plan.action
-#  NonBlockingDispatch.action
-#)
+add_action_files(
+  FILES
+  ExecutePlan.action
+)
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(

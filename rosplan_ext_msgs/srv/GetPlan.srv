@@ -1,0 +1,6 @@
+string domain
+string problem
+---
+bool success
+rosplan_ext_msgs/Plan plan
+string error_info

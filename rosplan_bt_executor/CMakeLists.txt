@@ -1,31 +1,24 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(rosplan_clients)
+project(rosplan_bt_executor)
 
-add_compile_options(-std=c++14)
+add_compile_options(-std=c++17)
 
 set(DEPS
   behaviortree_cpp_v3
   roscpp
-  rosplan_dispatch_msgs
-  rosplan_planning_system
   std_msgs
   rosplan_ext_msgs
+  rosplan_clients
+  lifecycle
 )  
 
 find_package(catkin REQUIRED COMPONENTS
   ${DEPS}
 )
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
-
-# catkin_python_setup()
-
-
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES rosplan_planner_client rosplan_domain_client rosplan_problem_client rosplan_executor_client
+  LIBRARIES rosplan_executor_node
   CATKIN_DEPENDS ${DEPS}
 #  DEPENDS system_lib
 )
@@ -39,17 +32,11 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(rosplan_domain_client src/DomainClient.cpp)
-target_link_libraries(rosplan_domain_client ${catkin_LIBRARIES} )
+add_library(rosplan_executor_node src/ExecutorNode.cpp)
+target_link_libraries(rosplan_executor_node ${catkin_LIBRARIES} )
 
-add_library(rosplan_planner_client src/PlannerClient.cpp)
-target_link_libraries(rosplan_planner_client ${catkin_LIBRARIES} )
-
-add_library(rosplan_problem_client src/ProblemClient.cpp)
-target_link_libraries(rosplan_problem_client ${catkin_LIBRARIES} )
-
-add_library(rosplan_executor_client src/ExecutorClient.cpp)
-target_link_libraries(rosplan_executor_client ${catkin_LIBRARIES} )
+add_executable(rosplan_bt_executor src/bt_executor_node.cpp)
+target_link_libraries(rosplan_bt_executor rosplan_executor_node ${catkin_LIBRARIES} )
 
 
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

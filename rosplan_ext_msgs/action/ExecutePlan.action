@@ -1,0 +1,6 @@
+rosplan_ext_msgs/Plan plan
+---
+bool success
+rosplan_ext_msgs/ActionExecutionInfo[] action_execution_status
+---
+rosplan_ext_msgs/ActionExecutionInfo[] action_execution_status
